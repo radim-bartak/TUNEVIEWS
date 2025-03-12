@@ -9,11 +9,10 @@ export default function Profile() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Předpokládáme, že backend má endpoint pro získání profilu uživatele
-        const userResponse = await api.get('/users/me');
+        const userResponse = await api.getProfile();
         setUser(userResponse.data);
         
-        const reviewsResponse = await api.get('/reviews/user');
+        const reviewsResponse = await api.getUserReviews();
         setReviews(reviewsResponse.data);
       } catch (err) {
         console.error(err);

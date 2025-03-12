@@ -13,11 +13,13 @@ const authRoutes = require('./routes/authRoutes');
 const releaseRoutes = require('./routes/releaseRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/releases', releaseRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/users', userRoutes);
 
 db.query('SELECT 1 + 1 AS solution')
   .then(() => console.log('Database connected!'))

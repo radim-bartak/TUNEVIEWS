@@ -1,6 +1,5 @@
 const db = require('../config/db');
 
-// Přidání komentáře
 const addComment = async (req, res) => {
   try {
     const { reviewId, content } = req.body;
@@ -14,7 +13,6 @@ const addComment = async (req, res) => {
   }
 };
 
-// Získání komentářů k recenzi
 const getCommentsByReview = async (req, res) => {
   try {
     const [comments] = await db.query(

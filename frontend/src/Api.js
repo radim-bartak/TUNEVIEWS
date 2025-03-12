@@ -12,10 +12,14 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-export default {
+const api = {
   // Auth
   register: (data) => API.post('/auth/register', data),
-  login: (data) => API.post('/auth/login', data),
+  login: (data) => API.post('/auth/login', data)
+  .then(res => res.data)
+  .catch(err => {
+    throw err.response?.data || err;
+  }),
 
   // Releases
   searchReleases: (query) => API.get(`/releases/search?q=${query}`),
@@ -32,3 +36,5 @@ export default {
   getProfile: () => API.get('/users/me'),
   getUserReviews: () => API.get('/reviews/user'),
 };
+
+export default api;

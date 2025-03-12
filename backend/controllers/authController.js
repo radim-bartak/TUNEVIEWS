@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const db = require('../config/db');
+const jwt = require('jsonwebtoken');
 
-// Registrace uživatele
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -18,7 +18,6 @@ const register = async (req, res) => {
   }
 };
 
-// Přihlášení uživatele
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -27,15 +26,26 @@ const login = async (req, res) => {
     if (users.length === 0) {
       return res.status(401).json({ error: 'Neplatný email nebo heslo' });
     }
-    
+
     const user = users[0];
     const validPassword = await bcrypt.compare(password, user.password_hash);
     
     if (!validPassword) {
       return res.status(401).json({ error: 'Neplatný email nebo heslo' });
     }
-    
-    res.json({ message: 'Přihlášení úspěšné', userId: user.id });
+
+    const token = jwt.sign(
+      { userId: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.json({ 
+      message: 'Přihlášení úspěšné',
+      token,
+      userId: user.id 
+    });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

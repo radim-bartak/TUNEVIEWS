@@ -1,6 +1,5 @@
 const db = require('../config/db');
 
-// Přidání recenze
 const addReview = async (req, res) => {
   try {
     const { releaseId, rating, content } = req.body;
@@ -14,7 +13,6 @@ const addReview = async (req, res) => {
   }
 };
 
-// Získání recenzí pro album
 const getReviewsByRelease = async (req, res) => {
   try {
     const [reviews] = await db.query(
@@ -30,4 +28,20 @@ const getReviewsByRelease = async (req, res) => {
   }
 };
 
-module.exports = { addReview, getReviewsByRelease };
+const getReviewsByUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const [reviews] = await db.query(
+      `SELECT r.*, a.title AS release_title
+       FROM reviews r
+       JOIN releases a ON r.release_id = a.id
+       WHERE r.user_id = ?`,
+      [userId]
+    );
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { addReview, getReviewsByRelease, getReviewsByUser };

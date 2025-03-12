@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate } = require('../middlewares/authMiddleware');
+const authenticate = require('../middlewares/authMiddleware');
 const { addComment, getCommentsByReview } = require('../controllers/commentController');
 
 router.post('/', authenticate, addComment);

@@ -12,14 +12,20 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await api.login({ email, password });
-      localStorage.setItem('token', data.token);
-      navigate('/');
+      const response = await api.login({ email, password });
+      
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('userId', response.userId);
+
+        navigate('/');
+      } else {
+        setError('Nepodařilo se získat přihlašovací token');
+      }
     } catch (err) {
-      setError('Neplatné přihlašovací údaje');
+      setError(err.response?.data?.error || 'Neplatné přihlašovací údaje');
     }
   };
-
   return (
     <div className="container mt-4">
       <h2>Přihlášení</h2>
