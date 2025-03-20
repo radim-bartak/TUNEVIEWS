@@ -19,15 +19,15 @@ export default function Home() {
 
   return (
     <div className="container mt-4">
-      <h1>Vyhledej album</h1>
+      <h1>Search</h1>
       <Form onSubmit={(e) => { e.preventDefault(); searchReleases(); }}>
         <Form.Control
           type="text"
-          placeholder="Zadej název alba..."
+          placeholder="Search releases..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <Button className="mt-2" onClick={searchReleases}>Hledat</Button>
+        <Button className="mt-2" onClick={searchReleases}>Search</Button>
       </Form>
       
       <Row className="mt-4">

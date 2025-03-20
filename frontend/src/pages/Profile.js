@@ -1,46 +1,69 @@
-import { useEffect, useState } from 'react';
-import { Card, ListGroup } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
+import { Button, Image, Alert } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../Api';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
-  const [reviews, setReviews] = useState([]);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProfile = async () => {
       try {
-        const userResponse = await api.getProfile();
-        setUser(userResponse.data);
-        
-        const reviewsResponse = await api.getUserReviews();
-        setReviews(reviewsResponse.data);
+        const response = await api.getProfile();
+        setUser(response.data);
       } catch (err) {
-        console.error(err);
+        setError('Error loading profile');
       }
     };
-    fetchData();
+    fetchProfile();
   }, []);
 
-  if (!user) return <div>Načítání...</div>;
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    navigate('/login');
+  };
+
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className="container mt-4">
-      <Card>
-        <Card.Body>
-          <Card.Title>{user.username}</Card.Title>
-          <Card.Text>{user.bio}</Card.Text>
-        </Card.Body>
-      </Card>
+      <h2>{user.username}</h2>
+      
+      <div className="mb-4">
+        {user.avatar_url && (
+          <Image 
+            src={user.avatar_url} 
+            roundedCircle 
+            width={150}
+            height={150}
+            className="mb-3"
+          />
+        )}
+      </div>
 
-      <h3 className="mt-4">Moje recenze</h3>
-      <ListGroup>
-        {reviews.map((review) => (
-          <ListGroup.Item key={review.id}>
-            <h5>{review.release.title}</h5>
-            <p>{review.content}</p>
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
+      <div className="mb-4">
+        <h4>Bio</h4>
+        <p>{user.bio || 'No bio yet.'}</p>
+      </div>
+      <div className="d-flex gap-2">
+         <Button 
+          variant="outline-primary" 
+          onClick={() => navigate('/profile/edit')}
+          >
+          Edit profile
+          </Button>
+          <Button 
+          variant="outline-danger"
+          onClick={handleLogout}
+        >
+          Log out
+        </Button>
+
+        {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+      </div>
     </div>
   );
 }

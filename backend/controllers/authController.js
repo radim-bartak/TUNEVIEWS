@@ -6,13 +6,14 @@ const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
+    const defaultAvatar = 'https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small_2x/user-profile-icon-free-vector.jpg';
     
     const [result] = await db.query(
-      'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
-      [username, email, hashedPassword]
+      'INSERT INTO users (username, email, password_hash, avatar_url) VALUES (?, ?, ?, ?)',
+      [username, email, hashedPassword, defaultAvatar]
     );
     
-    res.status(201).json({ message: 'Uživatel zaregistrován', userId: result.insertId });
+    res.status(201).json({ message: 'User account created', userId: result.insertId });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -24,24 +25,24 @@ const login = async (req, res) => {
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
     
     if (users.length === 0) {
-      return res.status(401).json({ error: 'Neplatný email nebo heslo' });
+      return res.status(401).json({ error: 'Invalid login' });
     }
 
     const user = users[0];
     const validPassword = await bcrypt.compare(password, user.password_hash);
     
     if (!validPassword) {
-      return res.status(401).json({ error: 'Neplatný email nebo heslo' });
+      return res.status(401).json({ error: 'Invalid login' });
     }
 
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '6h' }
     );
 
     res.json({ 
-      message: 'Přihlášení úspěšné',
+      message: 'login successful',
       token,
       userId: user.id 
     });

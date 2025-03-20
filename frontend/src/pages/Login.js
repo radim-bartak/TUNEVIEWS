@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Alert } from 'react-bootstrap';
 import api from '../Api';
@@ -7,7 +7,16 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loginExpired, setLoginExpired] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const expiredMessage = localStorage.getItem('loginExpired');
+    if (expiredMessage) {
+      setLoginExpired(expiredMessage);
+      localStorage.removeItem('loginExpired');
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,15 +29,16 @@ export default function Login() {
 
         navigate('/');
       } else {
-        setError('Nepodařilo se získat přihlašovací token');
+        setError('Error logging in');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Neplatné přihlašovací údaje');
+      setError(err.response?.data?.error || 'Invalid login credentials');
     }
   };
   return (
     <div className="container mt-4">
-      <h2>Přihlášení</h2>
+      <h2>Login</h2>
+      {loginExpired && <Alert variant="warning">{loginExpired}</Alert>}
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
@@ -40,17 +50,17 @@ export default function Login() {
           />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label>Heslo</Form.Label>
+          <Form.Label>Password</Form.Label>
           <Form.Control
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button variant="primary" type="submit">Přihlásit</Button>
+        <Button variant="primary" type="submit">Login</Button>
       </Form>
       <div className="mt-3">
-        Nemáte účet? <Button variant="link" onClick={() => navigate('/register')}>Zaregistrovat se</Button>
+        Don't have an account yet? <Button variant="link" onClick={() => navigate('/register')}>Register</Button>
       </div>
     </div>
   );

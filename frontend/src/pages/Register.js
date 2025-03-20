@@ -16,17 +16,17 @@ export default function Register() {
       await api.register({ username, email, password });
       navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.error || 'Registrace se nezdařila');
+      setError('Username or email already exists');
     }
   };
 
   return (
     <div className="container mt-4">
-      <h2>Registrace</h2>
+      <h2>Register</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
-          <Form.Label>Uživatelské jméno</Form.Label>
+          <Form.Label>Username</Form.Label>
           <Form.Control
             type="text"
             value={username}
@@ -46,7 +46,7 @@ export default function Register() {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Heslo</Form.Label>
+          <Form.Label>Password</Form.Label>
           <Form.Control
             type="password"
             value={password}
@@ -55,9 +55,9 @@ export default function Register() {
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit">Registrovat</Button>
+        <Button variant="primary" type="submit">Register</Button>
         <div className="mt-3">
-          Již máte účet? <Button variant="link" onClick={() => navigate('/login')}>Přihlásit se</Button>
+          Have an account? <Button variant="link" onClick={() => navigate('/login')}>Login</Button>
         </div>
       </Form>
     </div>

@@ -6,6 +6,7 @@ import ReleaseDetail from './pages/ReleaseDetail';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import EditProfile from './pages/EditProfile';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/release/:mbid" element={<ReleaseDetail />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/edit" element={<EditProfile />} />
       </Routes>
     </Router>
   );

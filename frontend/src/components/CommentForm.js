@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import api from '../Api';
 
-export default function CommentForm({ reviewId }) {
+export default function CommentForm({ reviewId, onCommentAdded, onError }) {
   const [content, setContent] = useState('');
 
   const handleSubmit = async (e) => {
@@ -10,8 +10,14 @@ export default function CommentForm({ reviewId }) {
     try {
       await api.addComment({ reviewId, content });
       setContent('');
-      // aktualizovat seznam komentářů (např. přes kontext nebo prop callback)
+      if (onCommentAdded) {
+        onCommentAdded();
+      }
     } catch (err) {
+      const errorMessage = err.response?.data?.error || 'Error sending comment';
+      if (onError) {
+        onError(errorMessage);
+      }
       console.error(err);
     }
   };
@@ -22,13 +28,13 @@ export default function CommentForm({ reviewId }) {
         <Form.Control
           as="textarea"
           rows={2}
-          placeholder="Napiš komentář..."
+          placeholder="Write a comment..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
       </Form.Group>
       <Button variant="outline-primary" size="sm" type="submit" className="mt-2">
-        Odeslat
+        Send
       </Button>
     </Form>
   );

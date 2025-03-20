@@ -3,7 +3,7 @@ const db = require('../config/db');
 
 const authenticate = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'Přístup zamítnut' });
+  if (!token) return res.status(401).json({ error: 'Access denied' });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -12,7 +12,7 @@ const authenticate = async (req, res, next) => {
     req.user = users[0];
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Neplatný token' });
+    res.status(401).json({ error: 'Invalid token' });
   }
 };
 
