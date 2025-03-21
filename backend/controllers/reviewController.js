@@ -39,9 +39,24 @@ const getReviewsByRelease = async (req, res) => {
 
 const getReviewsByUser = async (req, res) => {
   try {
+    const [reviews] = await db.query(
+      `SELECT r.*, a.title AS release_title, a.artist AS artist_name
+       FROM reviews r
+       JOIN releases a ON r.release_id = a.id
+       WHERE r.user_id = ?`,
+      [req.params.userId]
+    );
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getCurrentUserReviews = async (req, res) => {
+  try {
     const userId = req.user.id;
     const [reviews] = await db.query(
-      `SELECT r.*, a.title AS release_title
+      `SELECT r.*, a.title AS release_title, a.artist AS artist_name
        FROM reviews r
        JOIN releases a ON r.release_id = a.id
        WHERE r.user_id = ?`,
@@ -80,4 +95,4 @@ const deleteReview = async (req, res) => {
   }
 };
 
-module.exports = { addReview, getReviewsByRelease, getReviewsByUser, updateReview, deleteReview };
+module.exports = { addReview, getReviewsByRelease, getReviewsByUser, getCurrentUserReviews, updateReview, deleteReview };

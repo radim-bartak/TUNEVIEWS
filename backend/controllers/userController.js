@@ -6,7 +6,9 @@ const getUserProfile = async (req, res) => {
       'SELECT id, username, email, avatar_url, bio FROM users WHERE id = ?',
       [req.params.userId]
     );
-    if (users.length === 0) return res.status(404).json({ error: 'User not found' });
+    if (users.length === 0) 
+      return res.status(404).json({ error: 'User not found' });
+    
     res.json(users[0]);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -42,7 +42,8 @@ const api = {
   // Reviews
   addReview: (data) => API.post('/reviews', data),
   getReviews: (releaseId) => API.get(`/reviews/release/${releaseId}`),
-  getUserReviews: () => API.get('/reviews/user'),
+  getUserReviews: (userId) => API.get(`/reviews/user/${userId}`),
+  getCurrentUserReviews: () => API.get('/reviews/me'),
   updateReview: (reviewId, data) => API.patch(`/reviews/${reviewId}`, data),
   deleteReview: (reviewId) => API.delete(`/reviews/${reviewId}`),
 
@@ -51,8 +52,8 @@ const api = {
   getCommentsByReview: (reviewId) => API.get(`/comments/review/${reviewId}`),
 
   // Users
-  getProfile: () => API.get('/users/me'),
-  getUserReviews: () => API.get('/reviews/user'),
+  getUserProfile: (userId) => API.get(`/users/${userId}`),
+  getCurrentUserProfile: () => API.get('/users/me'),
   updateUserProfile: (data) => API.patch('/users/me', data),
 };
 

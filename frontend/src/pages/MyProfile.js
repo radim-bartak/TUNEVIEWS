@@ -1,37 +1,43 @@
 import { useState, useEffect } from 'react';
-import { Alert, Image } from 'react-bootstrap';
-import { useParams, Link } from 'react-router-dom';
+import { Button, Image, Alert } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../Api';
 import ReviewList from '../components/ReviewList';
 
-export default function Profile() {
-  const { userId } = useParams();
+export default function MyProfile() {
   const [user, setUser] = useState(null);
-  const [reviews, setReviews] = useState([]);
   const [error, setError] = useState('');
+  const [reviews, setReviews] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchProfile = async () => {
       try {
-        const response = await api.getUserProfile(userId);
+        const response = await api.getCurrentUserProfile();
         setUser(response.data);
       } catch (err) {
-        setError(err.response?.data?.error || 'Error loading profile');
+        setError('Error loading profile');
       }
     };
 
     const fetchUserReviews = async () => {
       try {
-        const response = await api.getUserReviews(userId);
+        const response = await api.getCurrentUserReviews();
         setReviews(response.data);
       } catch (err) {
         console.error('Error fetching reviews:', err);
       }
     };
 
-    fetchUserProfile();
+    fetchProfile();
     fetchUserReviews();
-  }, [userId]);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    navigate('/login');
+  };
 
   if (!user) return <div>Loading...</div>;
 
@@ -46,7 +52,6 @@ export default function Profile() {
             roundedCircle 
             width={150}
             height={150}
-            alt={`${user.username}'s avatar`}
             className="mb-3"
           />
         )}
@@ -56,13 +61,26 @@ export default function Profile() {
         <h4>Bio</h4>
         <p>{user.bio || 'No bio yet.'}</p>
       </div>
+      <div className="d-flex gap-2">
+         <Button 
+          variant="outline-primary" 
+          onClick={() => navigate('/profile/edit')}
+          >
+          Edit profile
+          </Button>
+          <Button 
+          variant="outline-danger"
+          onClick={handleLogout}
+        >
+          Log out
+        </Button>
 
-      {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
-
+        {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+      </div>
       <div className="mb-4">
         <h4>Reviews</h4>
         {reviews.length > 0 ? (
-          <ReviewList reviews={reviews} onError={setError} profileView={true} />
+          <ReviewList reviews={reviews} onError={setError} profileView={true}/>
         ) : (
           <p>No reviews yet.</p>
         )}

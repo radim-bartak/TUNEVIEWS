@@ -102,7 +102,7 @@ export default function ReleaseDetail() {
             <>
               {editing ? (
                 <>
-                  <h3>Edit Your Review</h3>
+                  <h3>Edit Review</h3>
                   <Form onSubmit={handleEditReview} className="mb-4">
                     <Form.Group className="mb-3">
                       <Form.Label>Rating (1-10)</Form.Label>
@@ -129,7 +129,7 @@ export default function ReleaseDetail() {
                 </>
               ) : (
                 <>
-                  <h3>Your Review</h3>
+                  <h3>My Review</h3>
                   <Card className="mb-4">
                     <Card.Body>
                       <Card.Text>
