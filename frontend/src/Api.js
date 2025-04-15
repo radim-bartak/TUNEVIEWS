@@ -37,6 +37,7 @@ const api = {
 
   // Releases
   searchReleases: (query) => API.get(`/releases/search?q=${query}`),
+  autoSaveRelease: (data) => API.post('/releases/auto', data),
   getRelease: (id) => API.get(`/releases/${id}`),
 
   // Reviews
@@ -55,6 +56,7 @@ const api = {
   getUserProfile: (userId) => API.get(`/users/${userId}`),
   getCurrentUserProfile: () => API.get('/users/me'),
   updateUserProfile: (data) => API.patch('/users/me', data),
+  updateAdmin: (userId, data) => API.patch(`/users/admin/${userId}`, data),
 };
 
 export default api;

@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Navbar, Container, Nav, Button, Image } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import api from '../Api';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo2.png';
 
 export default function Navigation() {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ export default function Navigation() {
           <img 
             src={logo} 
             alt="TuneViews Logo" 
-            height="55" 
+            height="60" 
             className="d-inline-block align-top"
           />
         </Navbar.Brand>

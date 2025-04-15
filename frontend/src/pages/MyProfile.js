@@ -61,7 +61,7 @@ export default function MyProfile() {
         <h4>Bio</h4>
         <p>{user.bio || 'No bio yet.'}</p>
       </div>
-      <div className="d-flex gap-2">
+      <div className="d-flex gap-2 mb-5">
          <Button 
           variant="outline-primary" 
           onClick={() => navigate('/profile/edit')}
@@ -78,7 +78,7 @@ export default function MyProfile() {
         {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
       </div>
       <div className="mb-4">
-        <h4>Reviews</h4>
+        <h4>My Reviews</h4>
         {reviews.length > 0 ? (
           <ReviewList reviews={reviews} onError={setError} profileView={true}/>
         ) : (

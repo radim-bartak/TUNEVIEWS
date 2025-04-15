@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background-color: #343a40;
+}
+
+/* A custom container style to wrap your pages */
+.App {
+    background-color: #fff;
+    font-family: "Manrope", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* Example: Style for a heading */
+.page-heading {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+/* Style for buttons, for example */
+.btn-custom {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+strong, b, h1, h2, h3, h4, h5, h6 {
+    font-family: "Manrope", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 800 !important;
+    font-style: normal;
+}

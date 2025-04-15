@@ -12,11 +12,12 @@ export default function EditProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await api.getProfile();
+        const response = await api.getCurrentUserProfile();
         setBio(response.data.bio || '');
         setAvatarUrl(response.data.avatar_url || '');
       } catch (err) {
         setError('Error loading profile');
+        console.log(err);
       }
     };
     fetchProfile();

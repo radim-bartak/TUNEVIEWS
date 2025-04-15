@@ -26,6 +26,7 @@ export default function Login() {
       if (response.token) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('userId', response.userId);
+        localStorage.setItem('isAdmin', response.isAdmin ? 'true' : 'false')
 
         navigate('/');
       } else {

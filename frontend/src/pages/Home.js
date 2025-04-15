@@ -9,6 +9,7 @@ export default function Home() {
 
   const searchReleases = async () => {
     if (!query) return;
+    setReleases([]);
     try {
       const { data } = await api.searchReleases(query);
       setReleases(data);
@@ -19,20 +20,20 @@ export default function Home() {
 
   return (
     <div className="container mt-4">
-      <h1>Search</h1>
+      <h1>Music Search</h1>
       <Form onSubmit={(e) => { e.preventDefault(); searchReleases(); }}>
         <Form.Control
           type="text"
-          placeholder="Search releases..."
+          placeholder="Search for artists, albums, singles..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <Button className="mt-2" onClick={searchReleases}>Search</Button>
+        <Button className="mt-3" onClick={searchReleases}>Search</Button>
       </Form>
       
       <Row className="mt-4">
-        {releases.map((release) => (
-          <Col md={4} key={release.mbid}>
+        {releases.map((release, index) => (
+          <Col md={4} key={release.lastfm_id || `${release.name}-${index}`}>
             <ReleaseCard release={release} />
           </Col>
         ))}

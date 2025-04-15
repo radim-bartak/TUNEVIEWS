@@ -1,7 +1,7 @@
 const axios = require('axios');
 const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 
-// Vyhledání alb přes Last.fm
+// Last.fm API
 const searchReleases = async (query) => {
   const response = await axios.get('http://ws.audioscrobbler.com/2.0/', {
     params: {
@@ -11,10 +11,18 @@ const searchReleases = async (query) => {
       format: 'json',
     },
   });
-  return response.data.results.albummatches.album;
+  const albums = response.data.results.albummatches.album;
+
+  const albumsWithCover = albums.map(album => {
+    const cover = album.image.find(img => img.size === 'extralarge')?.['#text'];
+    return { ...album, cover };
+  });
+
+  return albumsWithCover;
 };
 
-// Získání typu vydání přes MusicBrainz
+
+// MusicBrainz API
 const getReleaseType = async (mbid) => {
   if (!mbid) return 'unknown';
   try {

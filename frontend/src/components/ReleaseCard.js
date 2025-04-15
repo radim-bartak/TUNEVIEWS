@@ -4,11 +4,18 @@ import { Link } from 'react-router-dom';
 export default function ReleaseCard({ release }) {
   return (
     <Card className="mb-4">
-      <Card.Img variant="top" src={release.cover_image} />
+      <Card.Img variant="top" src={release.cover} />
       <Card.Body>
         <Card.Title>{release.name}</Card.Title>
         <Card.Text>{release.artist}</Card.Text>
-        <Button as={Link} to={`/release/${release.mbid}`} variant="primary">Detaily</Button>
+        <Button
+          as={Link}
+          to={`/release/${release.lastfm_id}`}
+          state={{ release }}
+          variant="primary"
+        >
+          Details
+        </Button>
       </Card.Body>
     </Card>
   );

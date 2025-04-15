@@ -40,7 +40,7 @@ const getReviewsByRelease = async (req, res) => {
 const getReviewsByUser = async (req, res) => {
   try {
     const [reviews] = await db.query(
-      `SELECT r.*, a.title AS release_title, a.artist AS artist_name
+      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url
        FROM reviews r
        JOIN releases a ON r.release_id = a.id
        WHERE r.user_id = ?`,
@@ -56,7 +56,7 @@ const getCurrentUserReviews = async (req, res) => {
   try {
     const userId = req.user.id;
     const [reviews] = await db.query(
-      `SELECT r.*, a.title AS release_title, a.artist AS artist_name
+      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url
        FROM reviews r
        JOIN releases a ON r.release_id = a.id
        WHERE r.user_id = ?`,
@@ -85,7 +85,14 @@ const updateReview = async (req, res) => {
 const deleteReview = async (req, res) => {
   try {
     const { reviewId } = req.params;
-    const [result] = await db.query('DELETE FROM reviews WHERE id = ? AND user_id = ?', [reviewId, req.user.id]);
+
+    let query = 'DELETE FROM reviews WHERE id = ?';
+    let params = [reviewId];
+    if (!req.user.is_admin) {
+      query += ' AND user_id = ?';
+      params.push(req.user.id);
+    }
+    const [result] = await db.query(query, params);
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Review not found or not authorized to delete' });
     }

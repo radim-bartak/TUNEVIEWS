@@ -3,7 +3,7 @@ const db = require('../config/db');
 const getUserProfile = async (req, res) => {
   try {
     const [users] = await db.query(
-      'SELECT id, username, email, avatar_url, bio FROM users WHERE id = ?',
+      'SELECT id, username, email, avatar_url, bio, is_admin FROM users WHERE id = ?',
       [req.params.userId]
     );
     if (users.length === 0) 
@@ -19,7 +19,7 @@ const getCurrentUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     const [users] = await db.query(
-      'SELECT id, username, email, avatar_url, bio FROM users WHERE id = ?',
+      'SELECT id, username, email, avatar_url, bio, is_admin FROM users WHERE id = ?',
       [userId]
     );
     if (users.length === 0)
@@ -46,7 +46,7 @@ const updateUser = async (req, res) => {
     }
 
     const [users] = await db.query(
-      'SELECT id, username, email, avatar_url, bio FROM users WHERE id = ?',
+      'SELECT id, username, email, avatar_url, bio, is_admin FROM users WHERE id = ?',
       [userId]
     );
 
@@ -57,4 +57,25 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { getUserProfile, getCurrentUserProfile, updateUser };
+const updateAdmin = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { is_admin } = req.body;
+
+    const [result] = await db.query(
+      'UPDATE users SET is_admin = ? WHERE id = ?',
+      [is_admin, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ message: 'User admin status updated successfully' });
+  } catch (error) {
+    console.error('Error updating user admin status:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+module.exports = { getUserProfile, getCurrentUserProfile, updateUser, updateAdmin };
