@@ -11,6 +11,7 @@ export default function Profile() {
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -40,20 +41,53 @@ export default function Profile() {
       }
     };
 
+    const checkFollowing = async () => {
+      try {
+        const response = await api.checkFollowStatus(userId);
+        setIsFollowing(response.data.isFollowing);
+      } catch (err) {
+        setIsFollowing(false);
+      }
+    };
+
     fetchUserProfile();
     fetchUserReviews();
     fetchCurrentUser();
+    checkFollowing();
   }, [userId]);
 
   const handleMakeAdmin = async () => {
     try {
       await api.updateAdmin(user.id, { is_admin: true });
-      // update user state to reflect admin status
       setUser({ ...user, is_admin: true });
       setSuccess('User granted admin privileges.');
       setError('');
     } catch (err) {
       setError(err.response?.data?.error || 'Error updating admin status');
+      setSuccess('');
+    }
+  };
+
+  const handleFollow = async () => {
+    try {
+      await api.followUser(user.id);
+      setIsFollowing(true);
+      setSuccess('You are now following this user.');
+      setError('');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error following user');
+      setSuccess('');
+    }
+  };
+
+  const handleUnfollow = async () => {
+    try {
+      await api.unfollowUser(user.id);
+      setIsFollowing(false);
+      setSuccess('You have unfollowed this user.');
+      setError('');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error unfollowing user');
       setSuccess('');
     }
   };
@@ -83,6 +117,26 @@ export default function Profile() {
         <h4>Bio</h4>
         <p>{user.bio || 'No bio yet.'}</p>
       </div>
+
+      {currentUser && currentUser.id !== user.id && (
+        <div className="mb-3">
+          {isFollowing ? (
+            <Button 
+              variant="secondary"
+              onClick={handleUnfollow}
+            >
+              Unfollow
+            </Button>
+          ) : (
+            <Button 
+              variant="success"
+              onClick={handleFollow}
+            >
+              Follow
+            </Button>
+          )}
+        </div>
+      )}
 
       { currentUser && currentUser.is_admin && !user.is_admin && (
         <div className="mb-3">

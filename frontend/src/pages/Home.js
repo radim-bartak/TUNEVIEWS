@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button, Alert } from 'react-bootstrap';
 import ReleaseCard from '../components/ReleaseCard';
+import ReviewList from '../components/ReviewList';
 import api from '../Api';
 
 export default function Home() {
   const [query, setQuery] = useState('');
   const [releases, setReleases] = useState([]);
+  const [followingReviews, setFollowingReviews] = useState([]);
+  const [error, setError] = useState('');
 
   const searchReleases = async () => {
     if (!query) return;
@@ -17,6 +20,18 @@ export default function Home() {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    const fetchFollowingReviews = async () => {
+      try {
+        const { data } = await api.getFollowingReviews();
+        setFollowingReviews(data);
+      } catch (err) {
+        setError('Error loading reviews from followed users');
+      }
+    };
+    fetchFollowingReviews();
+  }, []);
 
   return (
     <div className="container mt-4">
@@ -38,6 +53,16 @@ export default function Home() {
           </Col>
         ))}
       </Row>
+
+      <div className="mt-5">
+        <h2>Reviews from Users You Follow</h2>
+        {error && <Alert variant="danger">{error}</Alert>}
+        {followingReviews.length > 0 ? (
+          <ReviewList reviews={followingReviews} onError={setError} />
+        ) : (
+          <p>No reviews from followed users yet.</p>
+        )}
+      </div>
     </div>
   );
 }

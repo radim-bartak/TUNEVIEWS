@@ -57,6 +57,12 @@ const api = {
   getCurrentUserProfile: () => API.get('/users/me'),
   updateUserProfile: (data) => API.patch('/users/me', data),
   updateAdmin: (userId, data) => API.patch(`/users/admin/${userId}`, data),
+
+  // Followers
+  followUser: (userId) => API.post(`/follow/${userId}`),
+  unfollowUser: (userId) => API.delete(`/follow/${userId}`),
+  getFollowingReviews: () => API.get(`/follow/reviews`),
+  checkFollowStatus: (userId) => API.get(`/follow/${userId}/status`),
 };
 
 export default api;

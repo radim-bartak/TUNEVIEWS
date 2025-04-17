@@ -194,7 +194,7 @@ export default function ReleaseDetail() {
               <h3>My Review</h3>
               <Form onSubmit={handleSubmitReview} className="mb-4">
                 <Form.Group className="mb-3">
-                  <Form.Label>Rating (1-10)</Form.Label>
+                  <Form.Label>Rating (1-5)</Form.Label>
                   <StarRating
                     value={newReview.rating}
                     onChange={(val) => setNewReview({ ...newReview, rating: val })}
