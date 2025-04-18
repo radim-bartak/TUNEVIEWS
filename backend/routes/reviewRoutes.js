@@ -3,6 +3,7 @@ const router = express.Router();
 const authenticate = require('../middlewares/authMiddleware');
 const {
   addReview,
+  getAllReviews,
   getReviewsByRelease,
   getReviewsByUser,
   getCurrentUserReviews,
@@ -14,6 +15,7 @@ const {
 } = require('../controllers/reviewController');
 
 router.post('/', authenticate, addReview);
+router.get('/', getAllReviews);
 router.get('/release/:releaseId', getReviewsByRelease);
 router.get('/user/:userId', getReviewsByUser);
 router.get('/me', authenticate, getCurrentUserReviews);

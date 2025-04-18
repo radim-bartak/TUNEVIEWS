@@ -35,51 +35,53 @@ export default function EditProfile() {
 
   return (
     <div className="container mt-4">
-      <h2>Edit Profile</h2>
-      
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>Avatar (URL)</Form.Label>
-          <Form.Control
-            type="url"
-            value={avatarUrl}
-            onChange={(e) => setAvatarUrl(e.target.value)}
-            placeholder="https://example.com/avatar.jpg"
-          />
-          {avatarUrl && (
-            <div className="mt-2">
-              <Image 
-                src={avatarUrl} 
-                thumbnail 
-                width={100}
-                height={100}
-              />
-            </div>
-          )}
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Bio</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={3}
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            placeholder="Write something about yourself..."
-          />
-        </Form.Group>
-
-        {error && <Alert variant="danger">{error}</Alert>}
+      <div className="section">
+        <h2>Edit Profile</h2>
         
-        <div className="d-flex gap-2">
-          <Button variant="primary" type="submit">
-            Save Changes
-          </Button>
-          <Button variant="secondary" onClick={() => navigate('/profile')}>
-            Cancel
-          </Button>
-        </div>
-      </Form>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Avatar (URL)</Form.Label>
+            <Form.Control
+              type="url"
+              value={avatarUrl}
+              onChange={(e) => setAvatarUrl(e.target.value)}
+              placeholder="https://example.com/avatar.jpg"
+            />
+            {avatarUrl && (
+              <div className="mt-2">
+                <Image 
+                  src={avatarUrl} 
+                  thumbnail 
+                  width={100}
+                  height={100}
+                />
+              </div>
+            )}
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Bio</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Write something about yourself..."
+            />
+          </Form.Group>
+
+          {error && <Alert variant="danger">{error}</Alert>}
+          
+          <div className="d-flex gap-2">
+            <Button variant="primary" type="submit">
+              Save Changes
+            </Button>
+            <Button variant="secondary" onClick={() => navigate('/profile')}>
+              Cancel
+            </Button>
+          </div>
+        </Form>
+      </div>
     </div>
   );
 }

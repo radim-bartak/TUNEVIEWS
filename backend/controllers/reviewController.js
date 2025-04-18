@@ -22,6 +22,22 @@ const addReview = async (req, res) => {
   }
 };
 
+const getAllReviews = async (req, res) => {
+  try {
+    const [reviews] = await db.query(
+      `SELECT r.*, u.username, u.avatar_url,
+        a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url,
+        (SELECT COUNT(*) FROM likes l WHERE l.review_id = r.id) AS likeCount
+       FROM reviews r
+       JOIN users u ON r.user_id = u.id
+       JOIN releases a ON r.release_id = a.id`
+    );
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const getReviewsByRelease = async (req, res) => {
   try {
     const [reviews] = await db.query(
@@ -41,10 +57,11 @@ const getReviewsByRelease = async (req, res) => {
 const getReviewsByUser = async (req, res) => {
   try {
     const [reviews] = await db.query(
-      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url,
+      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url, u.username, u.avatar_url,
         (SELECT COUNT(*) FROM likes l WHERE l.review_id = r.id) AS likeCount
        FROM reviews r
        JOIN releases a ON r.release_id = a.id
+       JOIN users u ON r.user_id = u.id
        WHERE r.user_id = ?`,
       [req.params.userId]
     );
@@ -58,10 +75,11 @@ const getCurrentUserReviews = async (req, res) => {
   try {
     const userId = req.user.id;
     const [reviews] = await db.query(
-      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url,
+      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url, u.username, u.avatar_url,
         (SELECT COUNT(*) FROM likes l WHERE l.review_id = r.id) AS likeCount
        FROM reviews r
        JOIN releases a ON r.release_id = a.id
+       JOIN users u ON r.user_id = u.id
        WHERE r.user_id = ?`,
       [userId]
     );
@@ -166,6 +184,7 @@ const getReviewLikes = async (req, res) => {
 
 module.exports = {
   addReview,
+  getAllReviews,
   getReviewsByRelease,
   getReviewsByUser,
   getCurrentUserReviews,

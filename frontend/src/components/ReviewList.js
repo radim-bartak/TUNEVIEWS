@@ -28,7 +28,7 @@ export default function ReviewList({ reviews, onError, profileView }) {
 
   return (
     <>
-      <div className="d-flex justify-content-between align-items-center mt-4 mb-3">
+      <div className="d-flex justify-content-between align-items-center mt-2 mb-3">
         <h4 className="mb-0">Reviews</h4>
         <Form.Select
           value={sortBy}

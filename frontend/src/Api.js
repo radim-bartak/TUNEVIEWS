@@ -42,6 +42,7 @@ const api = {
 
   // Reviews
   addReview: (data) => API.post('/reviews', data),
+  getAllReviews: () => API.get('/reviews'),
   getReviews: (releaseId) => API.get(`/reviews/release/${releaseId}`),
   getUserReviews: (userId) => API.get(`/reviews/user/${userId}`),
   getCurrentUserReviews: () => API.get('/reviews/me'),

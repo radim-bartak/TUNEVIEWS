@@ -47,8 +47,10 @@ const getFollowingReviews = async (req, res) => {
   try {
     const followerId = req.user.id;
     const [reviews] = await db.query(
-      `SELECT r.*, u.username, u.avatar_url
+      `SELECT r.*, u.username, u.avatar_url, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url,
+        (SELECT COUNT(*) FROM likes l WHERE l.review_id = r.id) AS likeCount
        FROM reviews r
+       JOIN releases a ON r.release_id = a.id
        JOIN followers f ON r.user_id = f.followee_id
        JOIN users u ON u.id = r.user_id
        WHERE f.follower_id = ?

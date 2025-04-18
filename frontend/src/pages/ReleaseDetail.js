@@ -125,7 +125,7 @@ export default function ReleaseDetail() {
               <Card.Title>{release.title || release.name}</Card.Title>
               <Card.Text>{release.artist}</Card.Text>
               {averageRating ? (
-                <h5>Average Rating: {averageRating}/10</h5>
+                <h5>Average Rating: {averageRating/2}/5</h5>
               ) : (
                 <h5>No reviews yet</h5>
               )}
@@ -166,7 +166,7 @@ export default function ReleaseDetail() {
                   <Card className="mb-4">
                     <Card.Body>
                       <Card.Text>
-                        Rating: {userReview.rating}/10
+                        Rating: {userReview.rating/2}/5
                       </Card.Text>
                       <Card.Text style={{ whiteSpace: 'pre-line' }}>
                         {userReview.content}

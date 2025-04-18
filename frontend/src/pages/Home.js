@@ -7,7 +7,7 @@ import api from '../Api';
 export default function Home() {
   const [query, setQuery] = useState('');
   const [releases, setReleases] = useState([]);
-  const [followingReviews, setFollowingReviews] = useState([]);
+  const [allReviews, setAllReviews] = useState([]);
   const [error, setError] = useState('');
 
   const searchReleases = async () => {
@@ -22,45 +22,49 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const fetchFollowingReviews = async () => {
+    const fetchAllReviews = async () => {
       try {
-        const { data } = await api.getFollowingReviews();
-        setFollowingReviews(data);
+        const { data } = await api.getAllReviews();
+        setAllReviews(data);
       } catch (err) {
-        setError('Error loading reviews from followed users');
+        setError('Error loading reviews');
       }
     };
-    fetchFollowingReviews();
+    fetchAllReviews();
   }, []);
 
   return (
     <div className="container mt-4">
-      <h1>Music Search</h1>
-      <Form onSubmit={(e) => { e.preventDefault(); searchReleases(); }}>
-        <Form.Control
-          type="text"
-          placeholder="Search for artists, albums, singles..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <Button className="mt-3" onClick={searchReleases}>Search</Button>
-      </Form>
-      
-      <Row className="mt-4">
-        {releases.map((release, index) => (
-          <Col md={4} key={release.lastfm_id || `${release.name}-${index}`}>
-            <ReleaseCard release={release} />
-          </Col>
-        ))}
-      </Row>
+      <div className="section">
+        <h1 className="mt-2">Music Search</h1>
+        <Form onSubmit={(e) => { e.preventDefault(); searchReleases(); }}>
+          <Form.Control
+            type="text"
+            placeholder="Search for artists, albums, singles..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <Button className="mt-3" onClick={searchReleases}>Search</Button>
+        </Form>
+        
+        <Row className="mt-4">
+          {releases.map((release, index) => (
+            <Col md={4} key={release.lastfm_id || `${release.name}-${index}`}>
+              <ReleaseCard release={release} />
+            </Col>
+          ))}
+        </Row>
+      </div>
 
-      <div className="mt-5">
-        {error && <Alert variant="danger">{error}</Alert>}
-        {followingReviews.length > 0 ? (
-          <ReviewList reviews={followingReviews} onError={setError} profileView={false} />
-        ) : (
-          <p>No reviews from followed users yet.</p>
-        )}
+      <div className="section">
+        <div className="mt-2">
+          {error && <Alert variant="danger">{error}</Alert>}
+          {allReviews.length > 0 ? (
+            <ReviewList reviews={allReviews} onError={setError} profileView={true} />
+          ) : (
+            <p>No new reviews.</p>
+          )}
+        </div>
       </div>
     </div>
   );

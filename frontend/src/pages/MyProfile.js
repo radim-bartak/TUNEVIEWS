@@ -54,51 +54,56 @@ export default function MyProfile() {
 
   return (
     <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="mb-0">{user.username}</h2>
-        <div className="d-flex gap-2">
-          <Button 
-            variant="outline-primary" 
-            onClick={() => navigate('/profile/edit')}
-          >
-            Edit profile
-          </Button>
-          <Button 
-            variant="outline-danger"
-            onClick={handleLogout}
-          >
-            Log out
-          </Button>
+      <div className="section">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="mb-0">{user.username}</h2>
+          <div className="d-flex gap-2">
+            <Button 
+              variant="outline-primary" 
+              onClick={() => navigate('/profile/edit')}
+            >
+              Edit profile
+            </Button>
+            <Button 
+              variant="outline-danger"
+              onClick={handleLogout}
+            >
+              Log out
+            </Button>
+          </div>
         </div>
-      </div>
-      
-      <div className="mb-2">
-        {user.avatar_url && (
-          <Image 
-            src={user.avatar_url} 
-            roundedCircle 
-            width={150}
-            height={150}
-            className="mb-2"
-          />
-        )}
+        
+        <div className="mb-2">
+          {user.avatar_url && (
+            <Image 
+              src={user.avatar_url} 
+              roundedCircle 
+              width={150}
+              height={150}
+              className="mb-2"
+            />
+          )}
+        </div>
+
+        <div className="mb-4">
+          {followerCount} <strong>{followerCount === 1 ? 'Follower' : 'Followers'}</strong>
+        </div>
+
+        <div className="mb-4">
+          <h4>Bio</h4>
+          <p>{user.bio || 'No bio yet.'}</p>
+        </div>
+        {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
       </div>
 
-      <div className="mb-4">
-        {followerCount} <strong>{followerCount === 1 ? 'Follower' : 'Followers'}</strong>
-      </div>
-
-      <div className="mb-4">
-        <h4>Bio</h4>
-        <p>{user.bio || 'No bio yet.'}</p>
-      </div>
-      {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
-      <div className="mb-4">
-        {reviews.length > 0 ? (
-          <ReviewList reviews={reviews} onError={setError} profileView={true}/>
-        ) : (
-          <p>No reviews yet.</p>
-        )}
+      <div className="section">
+        <div className="mb-4">
+          {reviews.length > 0 ? (
+            <ReviewList reviews={reviews} onError={setError} profileView={true}/>
+          ) : (
+            <p>No reviews yet.</p>
+          )}
+        </div>
       </div>
     </div>
   );
