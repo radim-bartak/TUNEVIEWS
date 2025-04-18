@@ -25,7 +25,8 @@ const addReview = async (req, res) => {
 const getReviewsByRelease = async (req, res) => {
   try {
     const [reviews] = await db.query(
-      `SELECT r.*, u.username, u.avatar_url
+      `SELECT r.*, u.username, u.avatar_url,
+        (SELECT COUNT(*) FROM likes l WHERE l.review_id = r.id) AS likeCount
        FROM reviews r 
        JOIN users u ON r.user_id = u.id 
        WHERE release_id = ?`,
@@ -40,7 +41,8 @@ const getReviewsByRelease = async (req, res) => {
 const getReviewsByUser = async (req, res) => {
   try {
     const [reviews] = await db.query(
-      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url
+      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url,
+        (SELECT COUNT(*) FROM likes l WHERE l.review_id = r.id) AS likeCount
        FROM reviews r
        JOIN releases a ON r.release_id = a.id
        WHERE r.user_id = ?`,
@@ -56,7 +58,8 @@ const getCurrentUserReviews = async (req, res) => {
   try {
     const userId = req.user.id;
     const [reviews] = await db.query(
-      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url
+      `SELECT r.*, a.title AS release_title, a.artist AS artist_name, a.cover_image_url as cover_image_url,
+        (SELECT COUNT(*) FROM likes l WHERE l.review_id = r.id) AS likeCount
        FROM reviews r
        JOIN releases a ON r.release_id = a.id
        WHERE r.user_id = ?`,
@@ -102,4 +105,73 @@ const deleteReview = async (req, res) => {
   }
 };
 
-module.exports = { addReview, getReviewsByRelease, getReviewsByUser, getCurrentUserReviews, updateReview, deleteReview };
+const likeReview = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const reviewId = parseInt(req.params.reviewId, 10);
+
+    const [existing] = await db.query(
+      'SELECT * FROM likes WHERE user_id = ? AND review_id = ?',
+      [req.user.id, reviewId]
+    );
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'You have already liked this review' });
+    }
+
+    await db.query(
+      'INSERT INTO likes (review_id, user_id) VALUES (?, ?)',
+      [reviewId, userId]
+    );
+    res.json({ message: 'Review liked' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const unlikeReview = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const reviewId = parseInt(req.params.reviewId, 10);
+
+    await db.query(
+      'DELETE FROM likes WHERE review_id = ? AND user_id = ?',
+      [reviewId, userId]
+    );
+    res.json({ message: 'Review unliked' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getReviewLikes = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const reviewId = parseInt(req.params.reviewId, 10);
+
+    const [[{ count }]] = await db.query(
+      'SELECT COUNT(*) as count FROM likes WHERE review_id = ?',
+      [reviewId]
+    );
+
+    const [likedRows] = await db.query(
+      'SELECT 1 FROM likes WHERE review_id = ? AND user_id = ? LIMIT 1',
+      [reviewId, userId]
+    );
+
+    res.json({ count, likedByCurrentUser: likedRows.length > 0 });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  addReview,
+  getReviewsByRelease,
+  getReviewsByUser,
+  getCurrentUserReviews,
+  updateReview,
+  deleteReview,
+  likeReview,
+  unlikeReview,
+  getReviewLikes
+};

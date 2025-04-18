@@ -12,6 +12,7 @@ export default function Profile() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -50,10 +51,20 @@ export default function Profile() {
       }
     };
 
+    const fetchFollowerCount = async () => {
+      try {
+        const response = await api.getFollowerCount(userId);
+        setFollowerCount(response.data.count);
+      } catch (err) {
+        setFollowerCount(0);
+      }
+    };
+
     fetchUserProfile();
     fetchUserReviews();
     fetchCurrentUser();
     checkFollowing();
+    fetchFollowerCount();
   }, [userId]);
 
   const handleMakeAdmin = async () => {
@@ -74,6 +85,7 @@ export default function Profile() {
       setIsFollowing(true);
       setSuccess('You are now following this user.');
       setError('');
+      setFollowerCount(followerCount + 1);
     } catch (err) {
       setError(err.response?.data?.error || 'Error following user');
       setSuccess('');
@@ -86,6 +98,7 @@ export default function Profile() {
       setIsFollowing(false);
       setSuccess('You have unfollowed this user.');
       setError('');
+      setFollowerCount(followerCount > 0 ? followerCount - 1 : 0);
     } catch (err) {
       setError(err.response?.data?.error || 'Error unfollowing user');
       setSuccess('');
@@ -96,11 +109,29 @@ export default function Profile() {
 
   return (
     <div className="container mt-4">
-      <h2>
-        {user.username} {user.is_admin && (<span className="text-muted ms-2" style={{ fontSize: '1.1rem' }}>Admin</span>)}
-      </h2>
-      
-      <div className="mb-4">
+
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="mb-0">
+          {user.username} {user.is_admin && (<span className="text-muted ms-2" style={{ fontSize: '1.1rem' }}>Admin</span>)}
+        </h2>
+        <div className="d-flex gap-2">
+          {currentUser && currentUser.id !== user.id && (
+            isFollowing ? (
+              <Button variant="secondary" onClick={handleUnfollow}>Unfollow</Button>
+            ) : (
+              <Button variant="success" onClick={handleFollow}>Follow</Button>
+            )
+          )}
+          {currentUser?.is_admin && !user.is_admin ? (
+            <Button variant="primary" onClick={handleMakeAdmin}>Make Admin</Button>
+          ) : null}
+        </div>
+      </div>
+
+      { success && <Alert variant="success">{success}</Alert> }
+      { error && <Alert variant="danger" className="mt-3">{error}</Alert> }
+
+      <div className="mb-2">
         {user.avatar_url && (
           <Image 
             src={user.avatar_url} 
@@ -108,9 +139,13 @@ export default function Profile() {
             width={150}
             height={150}
             alt={`${user.username}'s avatar`}
-            className="mb-3"
+            className="mb-2"
           />
         )}
+      </div> 
+
+      <div className="mb-4">
+        {followerCount} <strong>{followerCount === 1 ? 'Follower' : 'Followers'}</strong>
       </div>
 
       <div className="mb-4">
@@ -118,39 +153,7 @@ export default function Profile() {
         <p>{user.bio || 'No bio yet.'}</p>
       </div>
 
-      {currentUser && currentUser.id !== user.id && (
-        <div className="mb-3">
-          {isFollowing ? (
-            <Button 
-              variant="secondary"
-              onClick={handleUnfollow}
-            >
-              Unfollow
-            </Button>
-          ) : (
-            <Button 
-              variant="success"
-              onClick={handleFollow}
-            >
-              Follow
-            </Button>
-          )}
-        </div>
-      )}
-
-      { currentUser && currentUser.is_admin && !user.is_admin && (
-        <div className="mb-3">
-          <Button variant="primary" onClick={handleMakeAdmin}>
-            Make Admin
-          </Button>
-        </div>
-      )}
-
-      { success && <Alert variant="success">{success}</Alert> }
-      { error && <Alert variant="danger" className="mt-3">{error}</Alert> }
-
       <div className="mb-4">
-        <h4>Reviews</h4>
         {reviews.length > 0 ? (
           <ReviewList reviews={reviews} onError={setError} profileView={true} />
         ) : (

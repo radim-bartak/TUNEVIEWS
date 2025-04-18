@@ -168,7 +168,7 @@ export default function ReleaseDetail() {
                       <Card.Text>
                         Rating: {userReview.rating}/10
                       </Card.Text>
-                      <Card.Text>
+                      <Card.Text style={{ whiteSpace: 'pre-line' }}>
                         {userReview.content}
                       </Card.Text>
                       <Button variant="outline-primary" onClick={() => {
@@ -214,7 +214,6 @@ export default function ReleaseDetail() {
             </>
           )}
           
-          <h3>Reviews</h3>
           <ReviewList reviews={reviews} onError={setError}/>
         </Col>
       </Row>

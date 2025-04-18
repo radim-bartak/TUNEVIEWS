@@ -55,10 +55,9 @@ export default function Home() {
       </Row>
 
       <div className="mt-5">
-        <h2>Reviews from Users You Follow</h2>
         {error && <Alert variant="danger">{error}</Alert>}
         {followingReviews.length > 0 ? (
-          <ReviewList reviews={followingReviews} onError={setError} />
+          <ReviewList reviews={followingReviews} onError={setError} profileView={false} />
         ) : (
           <p>No reviews from followed users yet.</p>
         )}

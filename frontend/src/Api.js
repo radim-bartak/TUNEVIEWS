@@ -48,6 +48,11 @@ const api = {
   updateReview: (reviewId, data) => API.patch(`/reviews/${reviewId}`, data),
   deleteReview: (reviewId) => API.delete(`/reviews/${reviewId}`),
 
+  // Likes
+  likeReview: (reviewId) => API.post(`/reviews/${reviewId}/like`),
+  unlikeReview: (reviewId) => API.delete(`/reviews/${reviewId}/like`),
+  getReviewLikes: (reviewId) => API.get(`/reviews/${reviewId}/likes`),
+
   // Comments
   addComment: (data) => API.post('/comments', data),
   getCommentsByReview: (reviewId) => API.get(`/comments/review/${reviewId}`),
@@ -63,6 +68,7 @@ const api = {
   unfollowUser: (userId) => API.delete(`/follow/${userId}`),
   getFollowingReviews: () => API.get(`/follow/reviews`),
   checkFollowStatus: (userId) => API.get(`/follow/${userId}/status`),
+  getFollowerCount: (userId) => API.get(`/follow/${userId}/count`)
 };
 
 export default api;

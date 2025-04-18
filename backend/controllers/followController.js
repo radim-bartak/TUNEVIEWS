@@ -77,4 +77,17 @@ const checkFollowStatus = async (req, res) => {
   }
 };
 
-module.exports = { followUser, unfollowUser, getFollowingReviews, checkFollowStatus };
+const getFollowerCount = async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId, 10);
+      const [[{ count }]] = await db.query(
+        'SELECT COUNT(*) as count FROM followers WHERE followee_id = ?',
+        [userId]
+      );
+      res.json({ count });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+module.exports = { followUser, unfollowUser, getFollowingReviews, checkFollowStatus, getFollowerCount };
