@@ -28,4 +28,7 @@ db.query('SELECT 1 + 1 AS solution')
   .catch(err => console.error('Database connection error:', err));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server běží na portu ${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
