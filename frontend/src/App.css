@@ -289,3 +289,24 @@ body.dark-mode .search-dropdown .list-group-item:hover {
   .dropdown-menu .dropdown-item-red {
     color: #ff4d4f !important;
   }
+
+  .grid-3x2 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+  .grid-3x2 a:hover img {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    transform: scale(1.03);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .list-group-item {
+    border: 0 !important;
+    border-radius: 10px !important;
+  }
+
+  body.dark-mode .list-group-item {
+    background-color: var(--dark-secondary) !important;
+    color: #f1f1f1 !important;
+  }

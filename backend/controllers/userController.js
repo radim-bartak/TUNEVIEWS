@@ -78,4 +78,43 @@ const updateAdmin = async (req, res) => {
   }
 };
 
-module.exports = { getUserProfile, getCurrentUserProfile, updateUser, updateAdmin };
+const getMostActiveUsers = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT u.id, u.username, u.avatar_url, COUNT(r.id) as reviewCount
+       FROM users u
+       LEFT JOIN reviews r ON u.id = r.user_id
+       GROUP BY u.id
+       ORDER BY reviewCount DESC
+       LIMIT 6`
+    );
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const searchUsers = async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.trim().length < 1) {
+      return res.status(400).json({ error: 'Query parameter "q" is required' });
+    }
+    const [users] = await db.query(
+      `SELECT id, username, avatar_url FROM users WHERE username LIKE ? LIMIT 10`,
+      [`%${q}%`]
+    );
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { 
+  getUserProfile, 
+  getCurrentUserProfile,
+  updateUser, 
+  updateAdmin, 
+  getMostActiveUsers,
+  searchUsers
+ };

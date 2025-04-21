@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { ListGroup, Form, Pagination } from 'react-bootstrap';
 import ReviewItem from './ReviewItem';
 
-export default function ReviewList({ reviews, onError, profileView }) {
+export default function ReviewList({ reviews, onError, profileView, recent }) {
   const [sortBy, setSortBy] = useState('newest');
   const [page, setPage] = useState(1);
-  const reviewsPerPage = 10;
+  const reviewsPerPage = 5;
 
   const getLikeCount = (review) => typeof review.likeCount === 'number' ? review.likeCount : (review.likes || 0);
 
@@ -39,7 +39,7 @@ export default function ReviewList({ reviews, onError, profileView }) {
   return (
     <>
       <div className="d-flex justify-content-between align-items-center mt-2 mb-3">
-        <h4 className="mb-0">Reviews</h4>
+        <h4 className="mb-0">{recent ? "Recent Reviews" : "Reviews"}</h4>
         <Form.Select
           value={sortBy}
           onChange={e => { setSortBy(e.target.value); setPage(1); }}

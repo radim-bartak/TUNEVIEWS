@@ -47,6 +47,9 @@ export default function FavouriteList({ userId }) {
           <div style={{ maxWidth: 120, fontSize: 14, marginTop: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {release.title || release.name}
           </div>
+          <div style={{ fontSize: 12, color: '#666' }}>
+            {release.artist}
+          </div>
         </Link>
       ))}
     </div>

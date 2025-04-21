@@ -10,12 +10,14 @@ const {
     addFavourite,
     removeFavourite,
     getFavourites,
-    isFavourite
+    isFavourite,
+    getNewestReleases
  } = require('../controllers/releaseController');
 
 router.post('/', authenticate, addRelease);
 router.get('/review/:reviewId', getAllReleases);
 router.get('/search', searchReleasesController);
+router.get('/newest', getNewestReleases);
 router.get('/:releaseId', getRelease);
 
 router.post('/auto', autoSaveRelease);

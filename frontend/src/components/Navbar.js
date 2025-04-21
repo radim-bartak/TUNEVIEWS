@@ -168,8 +168,8 @@ export default function Navigation() {
                 as={Image}
                 src={userProfile.avatar_url}
                 roundedCircle
-                width={45}
-                height={45}
+                width={36}
+                height={36}
                 alt={`${userProfile.username}'s avatar`}
                 className=""
                 style={{ cursor: 'pointer', objectFit: 'cover' }}

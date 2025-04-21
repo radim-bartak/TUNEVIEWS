@@ -144,6 +144,17 @@ const isFavourite = async (req, res) => {
   }
 };
 
+const getNewestReleases = async (req, res) => {
+  try {
+    const [releases] = await db.query(
+      'SELECT * FROM releases ORDER BY created_at DESC LIMIT 9'
+    );
+    res.json(releases);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = { 
   getAllReleases, 
   addRelease, 
@@ -153,5 +164,6 @@ module.exports = {
   addFavourite,
   removeFavourite,
   getFavourites,
-  isFavourite
+  isFavourite,
+  getNewestReleases 
 };

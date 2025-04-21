@@ -36,6 +36,7 @@ const api = {
     }),
 
   // Releases
+  getNewestReleases: () => API.get('/releases/newest'),
   searchReleases: (query) => API.get(`/releases/search?q=${query}`),
   autoSaveRelease: (data) => API.post('/releases/auto', data),
   getRelease: (id) => API.get(`/releases/${id}`),
@@ -67,6 +68,8 @@ const api = {
   getCommentsByReview: (reviewId) => API.get(`/comments/review/${reviewId}`),
 
   // Users
+  getMostActiveUsers: () => API.get('/users/most-active'),
+  searchUsers: (query) => API.get(`/users/search?q=${encodeURIComponent(query)}`),
   getUserProfile: (userId) => API.get(`/users/${userId}`),
   getCurrentUserProfile: () => API.get('/users/me'),
   updateUserProfile: (data) => API.patch('/users/me', data),
