@@ -182,6 +182,21 @@ const getReviewLikes = async (req, res) => {
   }
 };
 
+const getReviewLikeCount = async (req, res) => {
+  try {
+    const reviewId = parseInt(req.params.reviewId, 10);
+
+    const [[{ count }]] = await db.query(
+      'SELECT COUNT(*) as count FROM likes WHERE review_id = ?',
+      [reviewId]
+    );
+
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   addReview,
   getAllReviews,
@@ -192,5 +207,6 @@ module.exports = {
   deleteReview,
   likeReview,
   unlikeReview,
-  getReviewLikes
+  getReviewLikes,
+  getReviewLikeCount
 };

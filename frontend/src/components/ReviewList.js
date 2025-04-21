@@ -44,7 +44,7 @@ export default function ReviewList({ reviews, onError, profileView }) {
           value={sortBy}
           onChange={e => { setSortBy(e.target.value); setPage(1); }}
           size="sm"
-          style={{ border: 'none', boxShadow: 'none', maxWidth: 250 }}
+          className="sort-select"
         >
           <option value="newest">Sort by Newest</option>
           <option value="oldest">Sort by Oldest</option>

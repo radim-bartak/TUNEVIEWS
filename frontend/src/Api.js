@@ -28,12 +28,12 @@ API.interceptors.response.use(
 
 const api = {
   // Auth
-  register: (data) => API.post('/auth/register', data),
-  login: (data) => API.post('/auth/login', data)
-  .then(res => res.data)
-  .catch(err => {
-    throw err.response?.data || err;
-  }),
+  register: (data) => API.post('/auth/register', { username: data.username, password: data.password }),
+  login: (data) => API.post('/auth/login', { username: data.username, password: data.password })
+    .then(res => res.data)
+    .catch(err => {
+      throw err.response?.data || err;
+    }),
 
   // Releases
   searchReleases: (query) => API.get(`/releases/search?q=${query}`),
@@ -60,6 +60,7 @@ const api = {
   likeReview: (reviewId) => API.post(`/reviews/${reviewId}/like`),
   unlikeReview: (reviewId) => API.delete(`/reviews/${reviewId}/like`),
   getReviewLikes: (reviewId) => API.get(`/reviews/${reviewId}/likes`),
+  getReviewLikeCount: (reviewId) => API.get(`/reviews/${reviewId}/like/count`),
 
   // Comments
   addComment: (data) => API.post('/comments', data),

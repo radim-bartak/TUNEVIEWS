@@ -43,6 +43,7 @@ export default function Home() {
             placeholder="Search for artists, albums, singles..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            className="home-search"
           />
           <Button className="mt-3" onClick={searchReleases}>Search</Button>
         </Form>

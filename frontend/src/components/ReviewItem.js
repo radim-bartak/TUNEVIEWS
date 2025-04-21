@@ -25,9 +25,16 @@ export default function ReviewItem({ review, onError, profileView }) {
 
   const fetchLikes = async () => {
     try {
-      const res = await api.getReviewLikes(review.id);
-      setLikeCount(res.data.count);
-      setLiked(res.data.likedByCurrentUser);
+      const isLoggedIn = !!localStorage.getItem('token');
+      if (isLoggedIn) {
+        const res = await api.getReviewLikes(review.id);
+        setLikeCount(res.data.count);
+        setLiked(res.data.likedByCurrentUser);
+      } else {
+        const res = await api.getReviewLikeCount(review.id);
+        setLikeCount(res.data.count);
+        setLiked(false);
+      }
     } catch (error) {
       setLikeCount(0);
       setLiked(false);
@@ -67,7 +74,7 @@ export default function ReviewItem({ review, onError, profileView }) {
   };
   
   return (
-    <ListGroup.Item className="mb-4" style={{ boxShadow: '0 0 3px rgba(0, 0, 0, 0.1)', borderRadius: '5px' }}>
+    <ListGroup.Item className="review-item">
       <div className="d-flex align-items-center">
         {review.avatar_url && review.cover_image_url ? (
           <Link to={`/release/${review.release_id}`}>
@@ -98,11 +105,11 @@ export default function ReviewItem({ review, onError, profileView }) {
         )}
         <h5 className="m-0">
           {profileView && review.release_title ? (
-            <Link to={`/release/${review.release_id}`} className="text-decoration-none text-dark">
+            <Link to={`/release/${review.release_id}`} className="review-item-link">
               {review.artist_name} - {review.release_title} - {review.rating/2}/5
             </Link> 
           ) : (
-            <Link to={`/user/${review.user_id}`} className="text-decoration-none text-dark">
+            <Link to={`/user/${review.user_id}`} className="review-item-link">
               <strong>{review.username || 'Anonymous'}</strong> - {review.rating/2}/5
             </Link>
           )}
@@ -120,7 +127,7 @@ export default function ReviewItem({ review, onError, profileView }) {
       
       <div className="mt-3 d-flex align-items-center">
         {review.avatar_url && review.cover_image_url ? (
-          <Link to={`/user/${review.user_id}`} className="text-decoration-none text-dark">
+          <Link to={`/user/${review.user_id}`} className="review-item-link">
             <Image 
               src={review.avatar_url} 
               roundedCircle 

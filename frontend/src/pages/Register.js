@@ -5,7 +5,6 @@ import api from '../Api';
 
 export default function Register() {
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -13,10 +12,10 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.register({ username, email, password });
+      await api.register({ username, password });
       navigate('/login');
     } catch (err) {
-      setError('Username or email already exists');
+      setError('Username already exists');
     }
   };
 
@@ -35,17 +34,6 @@ export default function Register() {
               required
             />
           </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </Form.Group>
-
           <Form.Group className="mb-3">
             <Form.Label>Password</Form.Label>
             <Form.Control
@@ -55,7 +43,6 @@ export default function Register() {
               required
             />
           </Form.Group>
-
           <Button variant="primary" type="submit">Register</Button>
           <div className="mt-3">
             Have an account? <Button variant="link" onClick={() => navigate('/login')}>Login</Button>

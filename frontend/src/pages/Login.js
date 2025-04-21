@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Alert } from 'react-bootstrap';
 import api from '../Api';
+import { UserContext } from '../context/UserContext';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loginExpired, setLoginExpired] = useState('');
   const navigate = useNavigate();
+  const { fetchProfile } = useContext(UserContext);
 
   useEffect(() => {
     const expiredMessage = localStorage.getItem('loginExpired');
@@ -21,13 +23,12 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.login({ email, password });
-      
+      const response = await api.login({ username, password });
       if (response.token) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('userId', response.userId);
         localStorage.setItem('isAdmin', response.isAdmin ? 'true' : 'false')
-
+        await fetchProfile();
         navigate('/');
       } else {
         setError('Error logging in');
@@ -44,11 +45,11 @@ export default function Login() {
         {error && <Alert variant="danger">{error}</Alert>}
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3 mt-3">
-            <Form.Label>Email</Form.Label>
+            <Form.Label>Username</Form.Label>
             <Form.Control
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </Form.Group>
           <Form.Group className="mb-3">

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { FaSearch } from 'react-icons/fa';
-import { Navbar, Container, Nav, Button, Image, Form, FormControl, ListGroup, Spinner } from 'react-bootstrap';
-import { useContext, useState, useRef } from 'react';
+import { FaSearch, FaUser, FaMoon, FaSun, FaSignOutAlt } from 'react-icons/fa';
+import { Navbar, Container, Nav, Button, Image, Form, FormControl, ListGroup, Spinner, Dropdown } from 'react-bootstrap';
+import { useContext, useState, useRef, useEffect } from 'react';
 import { UserContext } from '../context/UserContext';
 import api from '../Api';
 import logo from '../assets/logo2.png';
@@ -16,6 +16,20 @@ export default function Navigation() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef();
+
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('darkMode') === 'true';
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('darkMode', 'true');
+    } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('darkMode', 'false');
+    }
+  }, [darkMode]);
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;
@@ -76,14 +90,20 @@ export default function Navigation() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    window.location.href = '/login';
+  };
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" style={{ position: 'relative', zIndex: 100 }}>
+    <Navbar className="navbar" expand="lg" sticky="top">
       <Container>
         <Navbar.Brand as={Link} to="/">
           <img 
             src={logo} 
             alt="TuneViews Logo" 
-            height="60" 
+            height="55" 
             className="d-inline-block align-top"
           />
         </Navbar.Brand>
@@ -143,23 +163,41 @@ export default function Navigation() {
 
         {isLoggedIn ? (
           userProfile && userProfile.avatar_url ? (
-            <Link to="/profile">
-              <Image 
-                src={userProfile.avatar_url} 
-                roundedCircle 
-                width={50} 
-                height={50}
+            <Dropdown align="end">
+              <Dropdown.Toggle
+                as={Image}
+                src={userProfile.avatar_url}
+                roundedCircle
+                width={45}
+                height={45}
                 alt={`${userProfile.username}'s avatar`}
-                className="border border-light p-1"
+                className=""
+                style={{ cursor: 'pointer', objectFit: 'cover' }}
+                id="profile-dropdown"
               />
-            </Link>
+              <Dropdown.Menu className="dropdown-menu">
+                <Dropdown.Item as={Link} to="/profile" className="dropdown-item">
+                  <FaUser className="me-2" style={{ fontSize: '0.8rem' }} />
+                  My Profile
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => setDarkMode(!darkMode)} className="dropdown-item">
+                  {darkMode ? <FaSun className="me-2" style={{ fontSize: '0.8rem' }} /> : <FaMoon className="me-2" style={{ fontSize: '0.85rem' }} />}
+                  {darkMode ? "Light Theme" : "Dark Theme"}
+                </Dropdown.Item>
+                <Dropdown.Divider className="light"/>
+                <Dropdown.Item onClick={handleLogout} className="dropdown-item-red">
+                  <FaSignOutAlt className="me-2" style={{ fontSize: '1rem' }} />
+                  Log out
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           ) : (
-            <Button variant="outline-light" as={Link} to="/profile">My Profile</Button>
+            <Button variant="outline-light" className="navbar-button" as={Link} to="/profile">My Profile</Button>
           )
         ) : (
           <>
-            <Button variant="outline-light" as={Link} to="/login">Login</Button>
-            <Button variant="outline-light" as={Link} to="/register" className="ms-2">Register</Button>
+            <Button variant="outline-light" className="navbar-button" as={Link} to="/login">Login</Button>
+            <Button variant="outline-light" className="navbar-button ms-2" as={Link} to="/register">Register</Button>
           </>
         )}
       </Container>

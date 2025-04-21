@@ -11,7 +11,8 @@ const {
   deleteReview,
   likeReview,
   unlikeReview,
-  getReviewLikes
+  getReviewLikes,
+  getReviewLikeCount
 } = require('../controllers/reviewController');
 
 router.post('/', authenticate, addReview);
@@ -25,5 +26,6 @@ router.delete('/:reviewId', authenticate, deleteReview);
 router.post('/:reviewId/like', authenticate, likeReview);
 router.delete('/:reviewId/like', authenticate, unlikeReview);
 router.get('/:reviewId/likes', authenticate, getReviewLikes);
+router.get('/:reviewId/like/count', getReviewLikeCount);
 
 module.exports = router;

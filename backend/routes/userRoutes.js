@@ -5,7 +5,7 @@ const authenticate = require('../middlewares/authMiddleware');
 const adminMiddleware = require('../middlewares/adminMiddleware');
 
 router.get('/me', authenticate, getCurrentUserProfile);
-router.get('/:userId', authenticate, getUserProfile)
+router.get('/:userId', getUserProfile)
 router.patch('/me', authenticate, updateUser);
 router.patch('/admin/:userId', authenticate, adminMiddleware, updateAdmin);
 

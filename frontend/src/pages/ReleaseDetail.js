@@ -165,7 +165,7 @@ export default function ReleaseDetail() {
       {error && <Alert variant="danger">{error}</Alert>}
       <Row>
         <Col md={4}>
-          <Card>
+          <Card className="release-card">
             <Card.Img variant="top" src={release.cover_image_url || release.cover} />
             <Card.Body>
               <Card.Title>{release.title || release.name}</Card.Title>

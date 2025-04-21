@@ -33,7 +33,7 @@ export default function CommentForm({ reviewId, onCommentAdded, onError }) {
           onChange={(e) => setContent(e.target.value)}
         />
       </Form.Group>
-      <Button variant="outline-primary" size="sm" type="submit" className="mt-2">
+      <Button variant="primary" size="sm" type="submit" className="mt-2">
         Send
       </Button>
     </Form>

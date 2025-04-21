@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 
 const register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
+    const email = "";
     const hashedPassword = await bcrypt.hash(password, 10);
     const defaultAvatar = 'https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small_2x/user-profile-icon-free-vector.jpg';
     
@@ -21,8 +22,8 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    const { username, password } = req.body;
+    const [users] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
     
     if (users.length === 0) {
       return res.status(401).json({ error: 'Invalid login' });
