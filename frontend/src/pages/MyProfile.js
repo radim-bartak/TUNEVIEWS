@@ -3,6 +3,7 @@ import { Button, Image, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../Api';
 import ReviewList from '../components/ReviewList';
+import FavouriteList from '../components/FavouriteList';
 
 export default function MyProfile() {
   const [user, setUser] = useState(null);
@@ -50,7 +51,13 @@ export default function MyProfile() {
     navigate('/login');
   };
 
-  if (!user) return <div>Loading...</div>;
+  if (!user) return (
+    <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+      <div className="spinner-border text-primary" role="status" aria-label="Loading">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  );
 
   return (
     <div className="container mt-4">
@@ -80,6 +87,7 @@ export default function MyProfile() {
               roundedCircle 
               width={150}
               height={150}
+              style={{ boxShadow: '0 3px 10px rgba(0,0,0,0.2)' }}
               className="mb-2"
             />
           )}
@@ -94,6 +102,11 @@ export default function MyProfile() {
           <p>{user.bio || 'No bio yet.'}</p>
         </div>
         {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+      </div>
+
+      <div className="section">
+        <h4 className="mb-2">Favourite Albums</h4>
+        <FavouriteList userId={user.id} />
       </div>
 
       <div className="section">

@@ -1,16 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Form, Button, Alert, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import api from '../Api';
+import { UserContext } from '../context/UserContext';
 
 export default function EditProfile() {
   const [bio, setBio] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { fetchProfile } = useContext(UserContext);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileData = async () => {
       try {
         const response = await api.getCurrentUserProfile();
         setBio(response.data.bio || '');
@@ -20,13 +22,14 @@ export default function EditProfile() {
         console.log(err);
       }
     };
-    fetchProfile();
+    fetchProfileData();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await api.updateUserProfile({ bio, avatar_url: avatarUrl });
+      await fetchProfile();
       navigate('/profile');
     } catch (err) {
       setError(err.response?.data?.error || 'Error updating profile');

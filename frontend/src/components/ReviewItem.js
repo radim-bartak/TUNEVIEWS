@@ -76,6 +76,7 @@ export default function ReviewItem({ review, onError, profileView }) {
               rounded 
               width={70} 
               height={70} 
+              style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.2)' }}
               className="me-3 mt-2"
               alt="Album cover"
             />
@@ -87,8 +88,9 @@ export default function ReviewItem({ review, onError, profileView }) {
                 src={review.avatar_url} 
                 roundedCircle 
                 width={50} 
-                height={50} 
-                className="me-2"
+                height={50}
+                style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.15)' }}
+                className="me-2 mt-2"
                 alt={`${review.username}'s avatar`}
               />
             </Link>
@@ -97,11 +99,11 @@ export default function ReviewItem({ review, onError, profileView }) {
         <h5 className="m-0">
           {profileView && review.release_title ? (
             <Link to={`/release/${review.release_id}`} className="text-decoration-none text-dark">
-              {review.artist_name} - {review.release_title} - {review.rating}/10
+              {review.artist_name} - {review.release_title} - {review.rating/2}/5
             </Link> 
           ) : (
             <Link to={`/user/${review.user_id}`} className="text-decoration-none text-dark">
-              <strong>{review.username || 'Anonymous'}</strong> - {review.rating}/10
+              <strong>{review.username || 'Anonymous'}</strong> - {review.rating/2}/5
             </Link>
           )}
         </h5>
@@ -152,10 +154,13 @@ export default function ReviewItem({ review, onError, profileView }) {
           variant="link"
           className="ms-4 p-0 pb-3"
           style={{ fontSize: '1.3rem', textDecoration: 'none' }}
-          onClick={() => setShowReplyForm(!showReplyForm)}
-          aria-label="Reply"
+          onClick={() => {
+            setShowReplyForm(!showReplyForm);
+            setOpen(!open);
+          }}
+          aria-label="Reply and Show Comments"
         >
-          <FaRegComment />
+          <FaRegComment /> {comments.length > 0 && <span>{comments.length}</span>}
         </Button>
       </div>
       {showReplyForm && (
@@ -165,30 +170,17 @@ export default function ReviewItem({ review, onError, profileView }) {
           onError={onError}
         />
       )}
-
+      
       {comments.length > 0 && (
-        <>
-          <div className="mt-0">
-            <Button
-              variant="link"
-              style={{ fontSize: '1rem', textDecoration: 'none' }}
-              onClick={() => setOpen(!open)}
-              aria-controls={`comments-${review.id}`}
-              aria-expanded={open}
-            >
-              {open ? 'Hide Comments' : `Show Comments (${comments.length})`}
-            </Button>
+        <Collapse in={open}>
+          <div id={`comments-${review.id}`} className="mt-3 mb-3">
+            {comments.map((comment) => (
+              <div key={comment.id} className="mt-2 p-2 bg-light rounded">
+                <strong>{comment.username || 'Anonymous'}:</strong> {comment.content}
+              </div>
+            ))}
           </div>
-          <Collapse in={open}>
-            <div id={`comments-${review.id}`} className="ms-4">
-              {comments.map((comment) => (
-                <div key={comment.id} className="mt-2 p-2 bg-light rounded">
-                  <strong>{comment.username || 'Anonymous'}:</strong> {comment.content}
-                </div>
-              ))}
-            </div>
-          </Collapse>
-        </>
+        </Collapse>
       )}
     </ListGroup.Item>
   );

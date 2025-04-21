@@ -8,7 +8,68 @@ body {
     background-color: #343a40;
 }
 
-/* A custom container style to wrap your pages */
+.custom-navbar {
+    position: relative;
+    z-index: 100;
+}
+
+.search-container {
+    position: relative;
+    min-width: 300px;
+}
+
+.search-input {
+    min-width: 180px;
+    background-color: #343a40 !important;
+    color: #fff !important;
+    border: 2px solid #444c54 !important;
+    border-radius: 10px !important;
+}
+
+.search-input::placeholder {
+    color: #fff !important;
+    opacity: 0.5 !important;
+}
+
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    background: #343a40;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    width: 95%;
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.search-dropdown .list-group-item {
+    background: #343a40;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-dropdown .list-group-item:hover {
+    background-color: #444c54;
+    color: #fff;
+}
+
+.search-dropdown .list-group-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.search-dropdown .list-group-item span {
+    font-size: 13px;
+    color: #fff;
+}
+
 .App {
     background-color: #fafafa;
     font-family: "Manrope", sans-serif;
@@ -17,14 +78,12 @@ body {
     font-style: normal;
 }
 
-/* Example: Style for a heading */
 .page-heading {
     color: #333;
     font-size: 2rem;
     margin-bottom: 20px;
 }
 
-/* Style for buttons, for example */
 .btn-custom {
     background-color: #007bff;
     border-color: #007bff;
@@ -43,4 +102,22 @@ strong, b, h1, h2, h3, h4, h5, h6 {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 2rem;
-  }
+
+}
+.search-form {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ccc;
+  font-size: 0.8rem;
+  z-index: 2;
+}
+
+.search-input.ps-5 {
+  padding-left: 2rem !important;
+}

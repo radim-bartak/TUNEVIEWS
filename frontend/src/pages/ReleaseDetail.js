@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Card, ListGroup, Form, Button, Alert, Row, Col } from 'react-bootstrap';
 import api from '../Api';
@@ -15,7 +15,17 @@ export default function ReleaseDetail() {
   const [newReview, setNewReview] = useState({ rating: 5, content: '' });
   const [error, setError] = useState('');
   const [editing, setEditing] = useState(false);
-  
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    if (textareaRef.current && editing) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [newReview.content, editing]);
+
+  const [isFavourite, setIsFavourite] = useState(false);
+
   const currentUserId = localStorage.getItem('userId');
 
   useEffect(() => {
@@ -60,10 +70,41 @@ export default function ReleaseDetail() {
       }
     };
 
+    setEditing(false);
+    setNewReview({ rating: 5, content: '' });
+    
     fetchRelease();
     fetchReviews();
   }, [lastfm_id, location.state, navigate]);
 
+  useEffect(() => {
+    const fetchFavouriteStatus = async () => {
+      try {
+        if (release && release.id) {
+          const res = await api.isFavourite(release.id);
+          setIsFavourite(res.data.isFavourite);
+        }
+      } catch {
+        setIsFavourite(false);
+      }
+    };
+    fetchFavouriteStatus();
+  }, [release]);
+
+  const handleFavourite = async () => {
+    try {
+      if (!release || !release.id) return;
+      if (isFavourite) {
+        await api.removeFavourite(release.id);
+        setIsFavourite(false);
+      } else {
+        await api.addFavourite(release.id);
+        setIsFavourite(true);
+      }
+    } catch (err) {
+      setError('Error updating favourites');
+    }
+  };
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
@@ -84,7 +125,6 @@ export default function ReleaseDetail() {
   const handleEditReview = async (e) => {
     e.preventDefault();
     try {
-
       await api.updateReview(userReview.id, newReview);
       setEditing(false);
 
@@ -112,7 +152,13 @@ export default function ReleaseDetail() {
 
   const userReview = reviews.find(review => review.user_id === Number(currentUserId));
 
-  if (!release) return <div>Loading...</div>;
+   if (!release) return (
+    <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+      <div className="spinner-border text-primary" role="status" aria-label="Loading">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  );
 
   return (
     <div className="container mt-4">
@@ -129,11 +175,19 @@ export default function ReleaseDetail() {
               ) : (
                 <h5>No reviews yet</h5>
               )}
+              <Button
+                variant={isFavourite ? "warning" : "outline-warning"}
+                className="mt-3"
+                onClick={handleFavourite}
+              >
+                {isFavourite ? "★ Favourite" : "☆ Add to Favourites"}
+              </Button>
             </Card.Body>
           </Card>
         </Col>
-        
+      
         <Col md={8}>
+        <div className="section">
           {userReview ? (
             <>
               {editing ? (
@@ -151,9 +205,15 @@ export default function ReleaseDetail() {
                       <Form.Label>Review</Form.Label>
                       <Form.Control
                         as="textarea"
-                        rows={3}
+                        rows={1}
+                        style={{ resize: 'none', overflow: 'hidden' }}
+                        ref={textareaRef}
                         value={newReview.content}
-                        onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
+                        onChange={(e) => {
+                          setNewReview({ ...newReview, content: e.target.value });
+                          e.target.style.height = 'auto';
+                          e.target.style.height = `${e.target.scrollHeight}px`;
+                        }}
                       />
                     </Form.Group>
                     <Button variant="primary" type="submit">Update</Button>{' '}
@@ -163,29 +223,22 @@ export default function ReleaseDetail() {
               ) : (
                 <>
                   <h3>My Review</h3>
-                  <Card className="mb-4">
-                    <Card.Body>
-                      <Card.Text>
-                        Rating: {userReview.rating/2}/5
-                      </Card.Text>
-                      <Card.Text style={{ whiteSpace: 'pre-line' }}>
-                        {userReview.content}
-                      </Card.Text>
-                      <Button variant="outline-primary" onClick={() => {
-                        setEditing(true);
-                        
-                        setNewReview({
-                          rating: userReview.rating,
-                          content: userReview.content
-                        });
-                      }}>
-                        Edit
-                      </Button>{' '}
-                      <Button variant="outline-danger" onClick={handleDeleteReview}>
-                        Delete
-                      </Button>
-                    </Card.Body>
-                  </Card>
+                  <div className="mb-4 mt-4">
+                    <p><strong>Rating:</strong> {userReview.rating/2}/5</p>
+                    <p style={{ whiteSpace: 'pre-line' }}>{userReview.content}</p>
+                    <Button variant="outline-primary" onClick={() => {
+                      setEditing(true);
+                      setNewReview({
+                        rating: userReview.rating,
+                        content: userReview.content
+                      });
+                    }}>
+                      Edit
+                    </Button>{' '}
+                    <Button variant="outline-danger" onClick={handleDeleteReview}>
+                      Delete
+                    </Button>
+                  </div>
                 </>
               )}
             </>
@@ -205,16 +258,27 @@ export default function ReleaseDetail() {
                   <Form.Control
                     as="textarea"
                     rows={3}
+                    style={{ resize: 'none', overflow: 'hidden' }}
                     value={newReview.content}
-                    onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
+                    onChange={(e) => {
+                      setNewReview({ ...newReview, content: e.target.value });
+                      e.target.style.height = 'auto';
+                      e.target.style.height = `${e.target.scrollHeight}px`;
+                    }}
                   />
                 </Form.Group>
                 <Button variant="primary" type="submit">Send</Button>
               </Form>
             </>
           )}
-          
-          <ReviewList reviews={reviews} onError={setError}/>
+        </div>
+        <div className="section">
+          {reviews.length > 0 ? (
+            <ReviewList reviews={reviews} onError={setError} profileView={true} />
+          ) : (
+            <p>No reviews yet.</p>
+          )}
+        </div>
         </Col>
       </Row>
     </div>

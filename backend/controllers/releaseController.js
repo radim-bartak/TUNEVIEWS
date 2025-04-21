@@ -82,4 +82,76 @@ const autoSaveRelease = async (req, res) => {
   }
 };
 
-module.exports = { getAllReleases, addRelease, getRelease, searchReleasesController, autoSaveRelease };
+const addFavourite = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const releaseId = req.params.releaseId;
+
+    const [existing] = await db.query(
+      'SELECT * FROM favourites WHERE user_id = ? AND release_id = ?',
+      [userId, releaseId]
+    );
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'This release is already in favourites' });
+    }
+
+    await db.query(
+      'INSERT INTO favourites (user_id, release_id) VALUES (?, ?)',
+      [userId, releaseId]
+    );
+    res.json({ message: 'Added to favourites' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const removeFavourite = async (req, res) => {
+  try {
+    await db.query(
+      'DELETE FROM favourites WHERE user_id = ? AND release_id = ?',
+      [req.user.id, req.params.releaseId]
+    );
+    res.json({ message: 'Removed from favourites' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getFavourites = async (req, res) => {
+  try {
+    const userId = req.params.userId ? parseInt(req.params.userId, 10) : req.user.id;
+    const [rows] = await db.query(
+      `SELECT r.* FROM releases r
+       JOIN favourites f ON r.id = f.release_id
+       WHERE f.user_id = ?`,
+      [userId]
+    );
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const isFavourite = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT 1 FROM favourites WHERE user_id = ? AND release_id = ?',
+      [req.user.id, req.params.releaseId]
+    );
+    res.json({ isFavourite: rows.length > 0 });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { 
+  getAllReleases, 
+  addRelease, 
+  getRelease, 
+  searchReleasesController, 
+  autoSaveRelease,
+  addFavourite,
+  removeFavourite,
+  getFavourites,
+  isFavourite
+};

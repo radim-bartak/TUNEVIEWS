@@ -3,6 +3,7 @@ import { Alert, Image, Button } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
 import api from '../Api';
 import ReviewList from '../components/ReviewList';
+import FavouriteList from '../components/FavouriteList';
 
 export default function Profile() {
   const { userId } = useParams();
@@ -105,8 +106,14 @@ export default function Profile() {
     }
   };
 
-  if (!user) return <div>Loading...</div>;
-
+  if (!user) return (
+    <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+      <div className="spinner-border text-primary" role="status" aria-label="Loading">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  );
+  
   return (
     <div className="container mt-4">
       <div className="section">
@@ -140,6 +147,7 @@ export default function Profile() {
               roundedCircle 
               width={150}
               height={150}
+              style={{ boxShadow: '0 3px 10px rgba(0,0,0,0.2)' }}
               alt={`${user.username}'s avatar`}
               className="mb-2"
             />
@@ -154,6 +162,11 @@ export default function Profile() {
           <h4>Bio</h4>
           <p>{user.bio || 'No bio yet.'}</p>
         </div>
+      </div>
+
+      <div className="section">
+        <h4 className="mb-2">Favourite Albums</h4>
+        <FavouriteList userId={userId} />
       </div>
 
       <div className="section">

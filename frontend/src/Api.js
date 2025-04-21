@@ -40,6 +40,13 @@ const api = {
   autoSaveRelease: (data) => API.post('/releases/auto', data),
   getRelease: (id) => API.get(`/releases/${id}`),
 
+  // Favourites
+  addFavourite: (releaseId) => API.post(`/releases/favourite/${releaseId}`),
+  removeFavourite: (releaseId) => API.delete(`/releases/favourite/${releaseId}`),
+  getFavouritesByUser: (userId) => API.get(`/releases/favourite/${userId}`),
+  getFavourites: () => API.get('/releases/favourite'),
+  isFavourite: (releaseId) => API.get(`/releases/favourite/${releaseId}/status`),
+
   // Reviews
   addReview: (data) => API.post('/reviews', data),
   getAllReviews: () => API.get('/reviews'),
@@ -69,7 +76,7 @@ const api = {
   unfollowUser: (userId) => API.delete(`/follow/${userId}`),
   getFollowingReviews: () => API.get(`/follow/reviews`),
   checkFollowStatus: (userId) => API.get(`/follow/${userId}/status`),
-  getFollowerCount: (userId) => API.get(`/follow/${userId}/count`)
+  getFollowerCount: (userId) => API.get(`/follow/${userId}/count`),
 };
 
 export default api;

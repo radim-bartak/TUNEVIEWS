@@ -48,7 +48,7 @@ export default function Home() {
         </Form>
         
         <Row className="mt-4">
-          {releases.map((release, index) => (
+          {releases.slice(0, 9).map((release, index) => (
             <Col md={4} key={release.lastfm_id || `${release.name}-${index}`}>
               <ReleaseCard release={release} />
             </Col>

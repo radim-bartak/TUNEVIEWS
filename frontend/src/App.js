@@ -9,23 +9,26 @@ import Register from './pages/Register';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import EditProfile from './pages/EditProfile';
 import Profile from './pages/Profile';
+import { UserProvider } from './context/UserContext';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/release/:lastfm_id" element={<ReleaseDetail />} />
-          <Route path="/profile" element={<MyProfile />} />
-          <Route path="/profile/edit" element={<EditProfile />} />
-          <Route path="/user/:userId" element={<Profile />} />
-        </Routes>
-      </div>
-    </Router>
+    <UserProvider>
+      <Router>
+        <div className="App">
+          <Navigation />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/release/:lastfm_id" element={<ReleaseDetail />} />
+            <Route path="/profile" element={<MyProfile />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/user/:userId" element={<Profile />} />
+          </Routes>
+        </div>
+      </Router>
+    </UserProvider>
   );
 }
 

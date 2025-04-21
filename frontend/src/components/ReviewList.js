@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { ListGroup, Form } from 'react-bootstrap';
+import { ListGroup, Form, Pagination } from 'react-bootstrap';
 import ReviewItem from './ReviewItem';
 
 export default function ReviewList({ reviews, onError, profileView }) {
   const [sortBy, setSortBy] = useState('newest');
+  const [page, setPage] = useState(1);
+  const reviewsPerPage = 10;
 
   const getLikeCount = (review) => typeof review.likeCount === 'number' ? review.likeCount : (review.likes || 0);
 
@@ -26,13 +28,21 @@ export default function ReviewList({ reviews, onError, profileView }) {
     return 0;
   });
 
+  const totalPages = Math.ceil(sortedReviews.length / reviewsPerPage);
+  const pagedReviews = sortedReviews.slice((page - 1) * reviewsPerPage, page * reviewsPerPage);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center mt-2 mb-3">
         <h4 className="mb-0">Reviews</h4>
         <Form.Select
           value={sortBy}
-          onChange={e => setSortBy(e.target.value)}
+          onChange={e => { setSortBy(e.target.value); setPage(1); }}
           size="sm"
           style={{ border: 'none', boxShadow: 'none', maxWidth: 250 }}
         >
@@ -44,10 +54,27 @@ export default function ReviewList({ reviews, onError, profileView }) {
         </Form.Select>
       </div>
       <ListGroup>
-        {sortedReviews.map((review) => (
+        {pagedReviews.map((review) => (
           <ReviewItem key={review.id} review={review} onError={onError} profileView={profileView} />
         ))}
       </ListGroup>
+      {totalPages > 1 && (
+        <Pagination className="mt-3 justify-content-center">
+          <Pagination.First onClick={() => handlePageChange(1)} disabled={page === 1} />
+          <Pagination.Prev onClick={() => handlePageChange(page - 1)} disabled={page === 1} />
+          {[...Array(totalPages)].map((_, idx) => (
+            <Pagination.Item
+              key={idx + 1}
+              active={page === idx + 1}
+              onClick={() => handlePageChange(idx + 1)}
+            >
+              {idx + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next onClick={() => handlePageChange(page + 1)} disabled={page === totalPages} />
+          <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={page === totalPages} />
+        </Pagination>
+      )}
     </>
   );
 }
